@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>纪念馆管理</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-page">
+    <header class="admin-header">
+        <div>
+            <p class="admin-kicker">Memorial Admin</p>
+            <h1>纪念馆管理</h1>
+            <p>编辑网站文字，上传临时相册照片，并导出备份数据。</p>
+        </div>
+        <nav class="admin-actions" aria-label="管理操作">
+            <a class="button ghost admin-ghost" href="index.html">查看网站</a>
+            <button class="button primary" id="saveAll" type="button">保存修改</button>
+        </nav>
+    </header>
+
+    <main class="admin-main">
+        <section class="admin-panel">
+            <div class="panel-heading">
+                <h2>网站文字</h2>
+                <p>这些内容会保存到当前浏览器，刷新主页即可看到。</p>
+            </div>
+
+            <div class="admin-grid two">
+                <label>
+                    <span>导航标题</span>
+                    <input id="navTitle" type="text">
+                </label>
+                <label>
+                    <span>姓名</span>
+                    <input id="heroName" type="text">
+                </label>
+                <label>
+                    <span>封面小字</span>
+                    <input id="heroEyebrow" type="text">
+                </label>
+                <label>
+                    <span>生卒日期</span>
+                    <input id="heroDates" type="text">
+                </label>
+            </div>
+
+            <label>
+                <span>封面寄语</span>
+                <textarea id="heroQuote" rows="3"></textarea>
+            </label>
+
+            <div class="admin-grid two">
+                <label>
+                    <span>生平标题</span>
+                    <input id="lifeTitle" type="text">
+                </label>
+                <label>
+                    <span>肖像说明</span>
+                    <input id="portraitCaption" type="text">
+                </label>
+                <label>
+                    <span>时间线标题</span>
+                    <input id="timelineTitle" type="text">
+                </label>
+                <label>
+                    <span>相册标题</span>
+                    <input id="galleryTitle" type="text">
+                </label>
+                <label>
+                    <span>寄语标题</span>
+                    <input id="tributesTitle" type="text">
+                </label>
+                <label>
+                    <span>页脚标题</span>
+                    <input id="footerTitle" type="text">
+                </label>
+            </div>
+
+            <label>
+                <span>页脚小字</span>
+                <input id="footerSmall" type="text">
+            </label>
+        </section>
+
+        <section class="admin-panel">
+            <div class="panel-heading">
+                <h2>生平正文</h2>
+                <p>每个文本框对应主页生平区的一段文字。</p>
+            </div>
+            <div id="lifeParagraphEditor" class="stack"></div>
+            <button class="button secondary" id="addLifeParagraph" type="button">增加一段</button>
+        </section>
+
+        <section class="admin-panel">
+            <div class="panel-heading">
+                <h2>岁月足迹</h2>
+                <p>可编辑时间、标题和说明，也可以新增一条。</p>
+            </div>
+            <div id="timelineEditor" class="stack"></div>
+            <button class="button secondary" id="addTimelineItem" type="button">增加足迹</button>
+        </section>
+
+        <section class="admin-panel">
+            <div class="panel-heading">
+                <h2>默认寄语</h2>
+                <p>主页初始展示的亲友寄语，访客自己留下的寄语仍保存在他们浏览器中。</p>
+            </div>
+            <div id="tributeEditor" class="stack"></div>
+            <button class="button secondary" id="addTributeItem" type="button">增加寄语</button>
+        </section>
+
+        <section class="admin-panel">
+            <div class="panel-heading">
+                <h2>上传照片</h2>
+                <p>照片会存入当前浏览器，适合先整理预览；正式发布时请导出备份。</p>
+            </div>
+
+            <div class="admin-grid two">
+                <label>
+                    <span>选择照片</span>
+                    <input id="photoFiles" type="file" accept="image/*" multiple>
+                </label>
+                <label>
+                    <span>分类</span>
+                    <input id="photoCategory" type="text" value="生活">
+                </label>
+                <label>
+                    <span>年份</span>
+                    <input id="photoYear" type="text" placeholder="例如 1998">
+                </label>
+                <label>
+                    <span>标题前缀</span>
+                    <input id="photoTitle" type="text" value="新增照片">
+                </label>
+            </div>
+            <label>
+                <span>统一说明</span>
+                <textarea id="photoCaption" rows="3" placeholder="这批照片的简短说明"></textarea>
+            </label>
+            <button class="button primary" id="uploadPhotos" type="button">上传到相册</button>
+        </section>
+
+        <section class="admin-panel">
+            <div class="panel-heading">
+                <h2>照片管理</h2>
+                <p>固定照片来自 album-data.js；管理员上传的照片可以删除。</p>
+            </div>
+            <div id="albumManager" class="album-manager"></div>
+        </section>
+
+        <section class="admin-panel">
+            <div class="panel-heading">
+                <h2>备份与发布</h2>
+                <p>导出的 JSON 可重新导入；导出的 JS 文件可交给开发者替换到网站中。</p>
+            </div>
+            <div class="tool-row">
+                <button class="button secondary" id="exportBackup" type="button">导出备份 JSON</button>
+                <button class="button secondary" id="exportContentJs" type="button">导出文字 JS</button>
+                <button class="button secondary" id="exportAlbumJs" type="button">导出上传相册 JS</button>
+                <label class="file-button">
+                    导入备份 JSON
+                    <input id="importBackup" type="file" accept="application/json">
+                </label>
+                <button class="button danger" id="resetDrafts" type="button">清除本机修改</button>
+            </div>
+            <p class="admin-status" id="adminStatus" aria-live="polite"></p>
+        </section>
+    </main>
+
+    <script src="site-data.js"></script>
+    <script src="album-data.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

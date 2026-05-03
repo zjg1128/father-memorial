@@ -1,0 +1,292 @@
+.admin-page {
+    background:
+        linear-gradient(180deg, rgba(83, 111, 104, 0.12), rgba(251, 247, 239, 0) 280px),
+        var(--paper);
+    overflow-x: hidden;
+}
+
+.admin-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    width: min(1180px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 42px 0 28px;
+}
+
+.admin-kicker {
+    margin: 0 0 8px;
+    color: var(--wine);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.admin-header h1 {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    line-height: 1.1;
+}
+
+.admin-header p {
+    margin: 10px 0 0;
+    color: var(--muted);
+}
+
+.admin-actions,
+.tool-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.admin-ghost {
+    border-color: var(--teal);
+    color: var(--teal);
+}
+
+.admin-main {
+    display: grid;
+    gap: 22px;
+    width: min(1180px, calc(100% - 40px));
+    margin: 0 auto 64px;
+}
+
+.admin-panel {
+    display: grid;
+    gap: 18px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: clamp(20px, 3vw, 30px);
+    background: rgba(255, 253, 248, 0.82);
+    box-shadow: 0 12px 34px rgba(36, 34, 32, 0.06);
+}
+
+.panel-heading h2 {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: 1.55rem;
+}
+
+.panel-heading p {
+    margin: 4px 0 0;
+    color: var(--muted);
+}
+
+.admin-grid {
+    display: grid;
+    gap: 16px;
+}
+
+.admin-grid.two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.stack {
+    display: grid;
+    gap: 14px;
+}
+
+.editor-item {
+    display: grid;
+    gap: 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 16px;
+    background: var(--white);
+}
+
+.editor-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    color: var(--wine);
+    font-weight: 700;
+}
+
+.admin-page label {
+    display: grid;
+    gap: 7px;
+    color: var(--muted);
+    font-size: 0.94rem;
+}
+
+.admin-page input,
+.admin-page textarea {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 11px 12px;
+    background: var(--white);
+    color: var(--ink);
+    font: inherit;
+}
+
+.admin-page textarea {
+    resize: vertical;
+}
+
+.admin-page input:focus,
+.admin-page textarea:focus {
+    outline: 2px solid rgba(83, 111, 104, 0.24);
+    border-color: var(--teal);
+}
+
+.button.secondary,
+.file-button {
+    min-height: 46px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 18px;
+    background: var(--white);
+    color: var(--teal);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.button.danger {
+    background: #7d3f3f;
+    color: var(--white);
+}
+
+.small-danger {
+    border: 0;
+    background: transparent;
+    color: #9a3d3d;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.file-button input {
+    display: none;
+}
+
+.album-manager {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 16px;
+}
+
+.admin-photo {
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--white);
+}
+
+.admin-photo img {
+    width: 100%;
+    height: auto;
+    background: var(--paper-soft);
+}
+
+.admin-photo-body {
+    display: grid;
+    gap: 8px;
+    padding: 12px;
+}
+
+.admin-photo-body strong {
+    font-family: var(--serif);
+}
+
+.admin-photo-body span {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.admin-status {
+    min-height: 28px;
+    margin: 0;
+    color: var(--wine);
+    font-weight: 700;
+}
+
+@media (max-width: 760px) {
+    .admin-header {
+        flex-direction: column;
+        width: min(100% - 28px, 1180px);
+        padding: 28px 0 18px;
+    }
+
+    .admin-header h1 {
+        font-size: 2.35rem;
+    }
+
+    .admin-header p {
+        font-size: 0.96rem;
+    }
+
+    .admin-actions,
+    .tool-row {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .admin-actions .button,
+    .tool-row .button,
+    .file-button {
+        width: 100%;
+        text-align: center;
+    }
+
+    .admin-main {
+        width: min(100% - 28px, 1180px);
+        gap: 16px;
+        margin-bottom: 42px;
+    }
+
+    .admin-panel {
+        gap: 16px;
+        padding: 18px;
+    }
+
+    .panel-heading h2 {
+        font-size: 1.32rem;
+    }
+
+    .panel-heading p {
+        font-size: 0.92rem;
+    }
+
+    .admin-grid.two {
+        grid-template-columns: 1fr;
+    }
+
+    .editor-item {
+        padding: 14px;
+    }
+
+    .editor-item-header {
+        align-items: flex-start;
+    }
+
+    .album-manager {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 420px) {
+    .admin-header,
+    .admin-main {
+        width: min(100% - 22px, 1180px);
+    }
+
+    .admin-header h1 {
+        font-size: 2.05rem;
+    }
+
+    .admin-panel {
+        padding: 16px;
+    }
+
+    .admin-page input,
+    .admin-page textarea {
+        padding: 10px;
+    }
+}
