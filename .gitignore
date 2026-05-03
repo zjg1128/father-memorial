@@ -1,0 +1,5 @@
+.env
+*.jwk
+arweave-wallet.json
+permanent-output/
+node_modules/

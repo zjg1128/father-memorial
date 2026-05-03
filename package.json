@@ -1,0 +1,14 @@
+{
+  "name": "father-memorial-permanent-publishing",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "archive:permanent": "node tools/permanent/create-archive.mjs",
+    "pin:ipfs": "node tools/permanent/pin-ipfs-pinata.mjs",
+    "upload:arweave": "node tools/permanent/upload-arweave-turbo.mjs"
+  },
+  "dependencies": {
+    "@ardrive/turbo-sdk": "1.41.2",
+    "archiver": "7.0.1"
+  }
+}
