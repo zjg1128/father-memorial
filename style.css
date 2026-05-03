@@ -10,7 +10,7 @@
     --white: #fffdf8;
     --surface: #fffdf8;
     --shadow: 0 14px 34px rgba(36, 34, 32, 0.08);
-    --serif: "Songti SC", "Noto Serif SC", "SimSun", serif;
+    --serif: "STKaiti", "KaiTi", "Kaiti SC", "Songti SC", "Noto Serif SC", "SimSun", serif;
     --sans: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", Arial, sans-serif;
 }
 
@@ -72,7 +72,7 @@ img {
 
 .nav-brand {
     font-family: var(--serif);
-    font-size: 1.08rem;
+    font-size: 1.36rem;
     font-weight: 700;
     letter-spacing: 0;
     white-space: nowrap;
@@ -83,7 +83,8 @@ img {
     align-items: center;
     gap: 28px;
     color: inherit;
-    font-size: 0.95rem;
+    font-size: 1.12rem;
+    font-weight: 600;
 }
 
 .nav-links a {
@@ -167,33 +168,6 @@ img {
     text-align: center;
 }
 
-.hero-portrait {
-    width: clamp(128px, 18vw, 190px);
-    aspect-ratio: 4 / 5;
-    margin: 0 auto 26px;
-    overflow: hidden;
-    border: 5px solid rgba(255, 253, 248, 0.82);
-    border-radius: 8px;
-    box-shadow: 0 22px 54px rgba(0, 0, 0, 0.24);
-    background: rgba(255, 253, 248, 0.18);
-}
-
-.hero-portrait img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center top;
-}
-
-.hero-portrait .image-fallback {
-    height: 100%;
-    min-height: 0;
-    border: 0;
-    border-radius: 0;
-    color: var(--white);
-    background: rgba(255, 253, 248, 0.18);
-}
-
 .eyebrow,
 .section-kicker {
     margin: 0 0 14px;
@@ -208,7 +182,7 @@ img {
 .hero h1 {
     margin: 0;
     font-family: var(--serif);
-    font-size: 6.4rem;
+    font-size: 7.2rem;
     font-weight: 700;
     line-height: 1;
     letter-spacing: 0;
@@ -741,7 +715,7 @@ img {
     }
 
     .nav-brand {
-        font-size: 1rem;
+        font-size: 1.18rem;
     }
 
     .nav-links {
@@ -749,7 +723,7 @@ img {
         justify-content: flex-start;
         flex-wrap: wrap;
         gap: 8px;
-        font-size: 0.88rem;
+        font-size: 1rem;
         line-height: 1.3;
     }
 
@@ -770,14 +744,8 @@ img {
         opacity: 0.20;
     }
 
-    .hero-portrait {
-        width: 128px;
-        margin-bottom: 18px;
-        border-width: 5px;
-    }
-
     .hero h1 {
-        font-size: 3.35rem;
+        font-size: 4.1rem;
     }
 
     .life-dates {
@@ -889,7 +857,7 @@ img {
 
     .nav-links {
         gap: 6px;
-        font-size: 0.82rem;
+        font-size: 0.9rem;
     }
 
     .nav-links a {
@@ -900,13 +868,8 @@ img {
         padding: 126px 14px 46px;
     }
 
-    .hero-portrait {
-        width: 116px;
-        margin-bottom: 16px;
-    }
-
     .hero h1 {
-        font-size: 3rem;
+        font-size: 3.35rem;
         line-height: 1.05;
     }
 
