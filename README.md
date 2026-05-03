@@ -1,5 +1,7 @@
 # 郑明富纪念馆
 
+Memorializing Father's Life Online.
+
 这是一个纯静态纪念网站，可以直接通过 GitHub Pages 发布。
 
 ## 本地查看
