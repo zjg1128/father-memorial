@@ -19,6 +19,8 @@ Memorializing Father's Life Online.
 
 注意：`admin.html` 是静态管理工具，没有账号登录和服务器权限。正式公开发布时，可以选择不公开管理员页面，或仅把它作为本地维护工具使用。
 
+访客寄语保存在 Cloudflare D1 数据库中。管理员在 `admin.html` 的“访客寄语管理”里输入本机 `.admin-token.txt` 中的密钥后，可以读取、隐藏、恢复、修改或删除寄语。
+
 ## 点灯和亲友寄语数据库
 
 网站前端会读取 `cloudflare-config.js` 里的 API 地址，当前配置为：

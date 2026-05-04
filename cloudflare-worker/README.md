@@ -30,13 +30,21 @@ npx wrangler d1 execute father_memorial --config cloudflare-worker/wrangler.toml
 npx wrangler secret put RATE_LIMIT_SALT --config cloudflare-worker/wrangler.toml
 ```
 
-5. 部署 Worker：
+5. 设置管理员密钥，用于 `admin.html` 管理访客寄语：
+
+```bash
+npx wrangler secret put ADMIN_TOKEN --config cloudflare-worker/wrangler.toml
+```
+
+管理员打开 `admin.html` 后，在“访客寄语管理”中输入这个密钥，即可读取、隐藏、恢复、修改或删除数据库中的寄语。
+
+6. 部署 Worker：
 
 ```bash
 npx wrangler deploy --config cloudflare-worker/wrangler.toml
 ```
 
-6. 在 Cloudflare Worker 里绑定自定义域名：
+7. 在 Cloudflare Worker 里绑定自定义域名：
 
 ```text
 api.mingfu.ccwu.cc

@@ -12,7 +12,7 @@
         <div>
             <p class="admin-kicker">Memorial Admin</p>
             <h1>纪念馆管理</h1>
-            <p>编辑网站文字，上传临时相册照片，并导出备份数据。</p>
+            <p>编辑网站文字，整理相册照片，管理访客寄语，并导出备份数据。</p>
         </div>
         <nav class="admin-actions" aria-label="管理操作">
             <a class="button ghost admin-ghost" href="index.html">查看网站</a>
@@ -105,10 +105,43 @@
         <section class="admin-panel">
             <div class="panel-heading">
                 <h2>默认寄语</h2>
-                <p>主页初始展示的亲友寄语，访客自己留下的寄语仍保存在他们浏览器中。</p>
+                <p>主页初始展示的亲友寄语；访客提交的数据库寄语请在下方管理。</p>
             </div>
             <div id="tributeEditor" class="stack"></div>
             <button class="button secondary" id="addTributeItem" type="button">增加寄语</button>
+        </section>
+
+        <section class="admin-panel">
+            <div class="panel-heading">
+                <h2>访客寄语管理</h2>
+                <p>管理 Cloudflare 数据库中的亲友寄语。管理员密钥只保存在当前浏览器会话中。</p>
+            </div>
+
+            <div class="admin-grid three">
+                <label>
+                    <span>API 地址</span>
+                    <input id="adminApiBase" type="url" value="https://api.mingfu.ccwu.cc">
+                </label>
+                <label>
+                    <span>管理员密钥</span>
+                    <input id="adminToken" type="password" autocomplete="current-password" placeholder="输入 ADMIN_TOKEN">
+                </label>
+                <label>
+                    <span>显示范围</span>
+                    <select id="commentStatus">
+                        <option value="all">全部寄语</option>
+                        <option value="approved">已显示</option>
+                        <option value="hidden">已隐藏</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="tool-row">
+                <button class="button primary" id="saveAdminToken" type="button">保存密钥</button>
+                <button class="button secondary" id="loadRemoteComments" type="button">读取寄语</button>
+            </div>
+            <p class="admin-status" id="remoteCommentStatus" aria-live="polite"></p>
+            <div id="remoteCommentManager" class="remote-comment-manager"></div>
         </section>
 
         <section class="admin-panel">
@@ -171,6 +204,7 @@
 
     <script src="site-data.js"></script>
     <script src="album-data.js"></script>
+    <script src="cloudflare-config.js"></script>
     <script src="admin.js"></script>
 </body>
 </html>

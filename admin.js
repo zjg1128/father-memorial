@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
     const CONTENT_KEY = "memorialContentDraft";
     const UPLOADED_ALBUM_KEY = "memorialUploadedAlbum";
+    const ADMIN_TOKEN_KEY = "memorialAdminToken";
+    const ADMIN_API_BASE_KEY = "memorialAdminApiBase";
 
     const defaultContent = window.memorialContent || {};
     const defaultAlbum = Array.isArray(window.memorialAlbum) ? window.memorialAlbum : [];
@@ -29,6 +31,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const setStatus = (message) => {
         document.querySelector("#adminStatus").textContent = message;
+    };
+
+    const setRemoteStatus = (message) => {
+        const status = document.querySelector("#remoteCommentStatus");
+        if (status) {
+            status.textContent = message;
+        }
     };
 
     const getContent = () => {
@@ -342,6 +351,210 @@ document.addEventListener("DOMContentLoaded", () => {
         reader.readAsText(file);
     };
 
+    const getAdminApiBase = () => {
+        const input = document.querySelector("#adminApiBase");
+        return (input?.value || "").trim().replace(/\/$/, "");
+    };
+
+    const getAdminToken = () => {
+        const input = document.querySelector("#adminToken");
+        return (input?.value || "").trim();
+    };
+
+    const saveAdminSession = () => {
+        const apiBase = getAdminApiBase();
+        const token = getAdminToken();
+
+        if (apiBase) {
+            sessionStorage.setItem(ADMIN_API_BASE_KEY, apiBase);
+        }
+
+        if (token) {
+            sessionStorage.setItem(ADMIN_TOKEN_KEY, token);
+        }
+
+        setRemoteStatus(token ? "管理员密钥已保存到当前浏览器会话。" : "请先输入管理员密钥。");
+    };
+
+    const loadAdminSession = () => {
+        const apiInput = document.querySelector("#adminApiBase");
+        const tokenInput = document.querySelector("#adminToken");
+        const savedApiBase = sessionStorage.getItem(ADMIN_API_BASE_KEY) || window.memorialApiBase || "";
+        const savedToken = sessionStorage.getItem(ADMIN_TOKEN_KEY) || "";
+
+        if (apiInput) {
+            apiInput.value = savedApiBase.replace(/\/$/, "");
+        }
+
+        if (tokenInput) {
+            tokenInput.value = savedToken;
+        }
+    };
+
+    const adminFetch = async (path, options = {}) => {
+        const apiBase = getAdminApiBase();
+        const token = getAdminToken();
+
+        if (!apiBase) {
+            throw new Error("请填写 API 地址。");
+        }
+
+        if (!token) {
+            throw new Error("请填写管理员密钥。");
+        }
+
+        const response = await fetch(`${apiBase}${path}`, {
+            ...options,
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+                ...(options.headers || {})
+            }
+        });
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            throw new Error(data.error || "请求失败。");
+        }
+
+        return data;
+    };
+
+    const formatDate = (value) => {
+        if (!value) {
+            return "";
+        }
+
+        return new Intl.DateTimeFormat("zh-CN", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+        }).format(new Date(value));
+    };
+
+    const createActionButton = (text, className, onClick) => {
+        const button = document.createElement("button");
+        button.className = className;
+        button.type = "button";
+        button.textContent = text;
+        button.addEventListener("click", onClick);
+        return button;
+    };
+
+    const renderRemoteComments = (comments) => {
+        const manager = document.querySelector("#remoteCommentManager");
+        manager.replaceChildren();
+
+        if (!comments.length) {
+            const empty = document.createElement("p");
+            empty.className = "admin-status";
+            empty.textContent = "暂无符合条件的访客寄语。";
+            manager.append(empty);
+            return;
+        }
+
+        comments.forEach((comment) => {
+            const item = document.createElement("article");
+            item.className = "remote-comment";
+            item.classList.toggle("hidden-comment", Number(comment.approved) !== 1);
+
+            const header = document.createElement("div");
+            header.className = "remote-comment-header";
+
+            const meta = document.createElement("div");
+            meta.className = "remote-comment-meta";
+            const id = document.createElement("span");
+            id.textContent = `#${comment.id}`;
+            const time = document.createElement("span");
+            time.textContent = formatDate(comment.created_at);
+            const status = document.createElement("span");
+            status.className = Number(comment.approved) === 1 ? "status-pill" : "status-pill hidden";
+            status.textContent = Number(comment.approved) === 1 ? "已显示" : "已隐藏";
+            meta.append(id, time, status);
+
+            header.append(meta);
+
+            const name = createInput("署名", comment.name || "", () => {});
+            const nameInput = name.querySelector("input");
+            nameInput.maxLength = 18;
+
+            const messageLabel = document.createElement("label");
+            const messageSpan = document.createElement("span");
+            messageSpan.textContent = "寄语内容";
+            const message = document.createElement("textarea");
+            message.rows = 3;
+            message.maxLength = 180;
+            message.value = comment.message || "";
+            messageLabel.append(messageSpan, message);
+
+            const actions = document.createElement("div");
+            actions.className = "remote-comment-actions";
+            actions.append(
+                createActionButton("保存修改", "button secondary", async () => {
+                    await updateRemoteComment(comment.id, {
+                        name: nameInput.value.trim(),
+                        message: message.value.trim()
+                    });
+                }),
+                createActionButton(Number(comment.approved) === 1 ? "隐藏" : "恢复显示", "button secondary", async () => {
+                    await updateRemoteComment(comment.id, {
+                        approved: Number(comment.approved) === 1 ? 0 : 1
+                    });
+                }),
+                createActionButton("删除", "button danger", async () => {
+                    if (window.confirm("确定删除这条寄语吗？删除后无法恢复。")) {
+                        await deleteRemoteComment(comment.id);
+                    }
+                })
+            );
+
+            item.append(header, name, messageLabel, actions);
+            manager.append(item);
+        });
+    };
+
+    const loadRemoteComments = async () => {
+        const status = document.querySelector("#commentStatus").value;
+        setRemoteStatus("正在读取访客寄语……");
+
+        try {
+            const data = await adminFetch(`/admin/comments?status=${encodeURIComponent(status)}&limit=100`);
+            renderRemoteComments(Array.isArray(data.comments) ? data.comments : []);
+            setRemoteStatus(`已读取 ${data.comments?.length || 0} 条访客寄语。`);
+        } catch (error) {
+            setRemoteStatus(error.message || "读取失败。");
+        }
+    };
+
+    const updateRemoteComment = async (id, patch) => {
+        setRemoteStatus("正在保存寄语修改……");
+
+        try {
+            await adminFetch(`/admin/comments/${id}`, {
+                method: "PATCH",
+                body: JSON.stringify(patch)
+            });
+            setRemoteStatus("寄语已更新。");
+            await loadRemoteComments();
+        } catch (error) {
+            setRemoteStatus(error.message || "保存失败。");
+        }
+    };
+
+    const deleteRemoteComment = async (id) => {
+        setRemoteStatus("正在删除寄语……");
+
+        try {
+            await adminFetch(`/admin/comments/${id}`, { method: "DELETE" });
+            setRemoteStatus("寄语已删除。");
+            await loadRemoteComments();
+        } catch (error) {
+            setRemoteStatus(error.message || "删除失败。");
+        }
+    };
+
     document.querySelector("#saveAll").addEventListener("click", saveContent);
     document.querySelector("#addLifeParagraph").addEventListener("click", () => {
         content.lifeParagraphs.push("新的生平段落。");
@@ -356,6 +569,9 @@ document.addEventListener("DOMContentLoaded", () => {
         renderTributes();
     });
     document.querySelector("#uploadPhotos").addEventListener("click", uploadPhotos);
+    document.querySelector("#saveAdminToken").addEventListener("click", saveAdminSession);
+    document.querySelector("#loadRemoteComments").addEventListener("click", loadRemoteComments);
+    document.querySelector("#commentStatus").addEventListener("change", loadRemoteComments);
     document.querySelector("#exportBackup").addEventListener("click", exportBackup);
     document.querySelector("#exportContentJs").addEventListener("click", exportContentJs);
     document.querySelector("#exportAlbumJs").addEventListener("click", exportAlbumJs);
@@ -372,5 +588,6 @@ document.addEventListener("DOMContentLoaded", () => {
         setStatus("已清除本机管理修改。");
     });
 
+    loadAdminSession();
     loadForm();
 });

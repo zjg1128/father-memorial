@@ -17,8 +17,10 @@ document.addEventListener("DOMContentLoaded", () => {
     content.defaultTributes = savedContent.defaultTributes || defaultContent.defaultTributes || [];
 
     const navbar = document.querySelector(".navbar");
+    const hero = document.querySelector(".hero");
     const candleButton = document.querySelector("#lightCandle");
     const candleCount = document.querySelector("#candleCount");
+    const memoryLights = document.querySelector("#memoryLights");
     const tributeForm = document.querySelector("#tributeForm");
     const tributeList = document.querySelector("#tributeList");
     const remoteComments = document.querySelector("#remoteComments");
@@ -257,6 +259,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
     applyContent();
 
+    const lightPositions = [
+        [8, 30], [13, 46], [18, 68], [24, 36], [27, 78], [11, 84],
+        [31, 24], [34, 58], [16, 22], [22, 88], [6, 62], [29, 70],
+        [70, 28], [76, 50], [82, 70], [88, 34], [93, 58], [74, 82],
+        [84, 22], [91, 78], [67, 62], [79, 88], [96, 42], [86, 86]
+    ];
+
+    const renderMemoryLights = (count = 0) => {
+        if (!memoryLights) {
+            return;
+        }
+
+        const total = Math.max(8, Math.min(lightPositions.length, Number(count) || 0));
+        memoryLights.replaceChildren();
+
+        lightPositions.slice(0, total).forEach(([left, top], index) => {
+            const light = document.createElement("span");
+            light.className = "memory-light";
+            light.style.left = `${left}%`;
+            light.style.top = `${top}%`;
+            light.style.animationDelay = `${(index % 6) * -0.75}s`;
+            light.style.setProperty("--light-scale", String(0.82 + (index % 4) * 0.12));
+            memoryLights.append(light);
+        });
+    };
+
+    const pulseHeroLamp = () => {
+        if (!hero) {
+            return;
+        }
+
+        hero.classList.remove("lamp-lit");
+        window.requestAnimationFrame(() => {
+            hero.classList.add("lamp-lit");
+            window.setTimeout(() => hero.classList.remove("lamp-lit"), 1500);
+        });
+    };
+
     const formatDate = (value) => {
         if (!value) {
             return "";
@@ -317,6 +357,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const loadCloudflareStore = async () => {
         if (!apiBase) {
             candleCount.textContent = "未配置";
+            renderMemoryLights();
 
             if (remoteComments) {
                 remoteComments.replaceChildren();
@@ -336,9 +377,11 @@ document.addEventListener("DOMContentLoaded", () => {
             ]);
 
             candleCount.textContent = String(stats.candles || 0);
+            renderMemoryLights(stats.candles || 0);
             renderRemoteComments(Array.isArray(commentsData.comments) ? commentsData.comments : []);
         } catch {
             candleCount.textContent = "暂不可用";
+            renderMemoryLights();
 
             if (remoteComments) {
                 remoteComments.replaceChildren();
@@ -358,6 +401,8 @@ document.addEventListener("DOMContentLoaded", () => {
             try {
                 const result = await apiFetch("/candles", { method: "POST", body: JSON.stringify({}) });
                 candleCount.textContent = String(result.candles || 0);
+                renderMemoryLights(result.candles || 0);
+                pulseHeroLamp();
                 candleButton.textContent = "思念已点亮";
             } catch {
                 candleButton.textContent = "点亮失败";
@@ -397,5 +442,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    renderMemoryLights();
     loadCloudflareStore();
 });

@@ -5,3 +5,4 @@ permanent-output/
 node_modules/
 .dev.vars
 .wrangler/
+.admin-token.txt
