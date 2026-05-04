@@ -1,20 +1,32 @@
 照片管理说明
 
+当前文件夹：
+
+- images/cover/：封面和生平纪念区使用的肖像照片
+- images/album/life/：生活照片
+- images/album/family/：家庭照片
+- images/album/group/：亲友合影
+- images/album/old/：旧照
+
 当前命名：
 
-- portrait.jpg：封面和生平纪念区的肖像照片
-- album-01.jpg 至 album-11.jpg：相册照片
+- images/cover/portrait.jpg：封面和生平纪念区的肖像照片
+- images/album/life/album-01.jpg 等：生活类相册照片
+- images/album/family/album-05.jpg 等：家庭类相册照片
+- images/album/group/album-03.jpg 等：合影类相册照片
+- images/album/old/album-11.jpg 等：旧照类相册照片
 
 新增照片时建议继续使用这个格式：
 
-- album-12.jpg
-- album-13.jpg
-- album-14.jpg
+- 生活照片：images/album/life/life-01.jpg
+- 家庭照片：images/album/family/family-01.jpg
+- 合影照片：images/album/group/group-01.jpg
+- 旧照：images/album/old/old-01.jpg
 
 然后打开网站根目录里的 album-data.js，按已有格式增加一段照片信息：
 
 {
-    src: "images/album-12.jpg",
+    src: "images/album/family/family-01.jpg",
     title: "照片标题",
     year: "1998",
     category: "家庭",
@@ -28,7 +40,7 @@
 - 文件名、src 路径、title、year、category、caption 都要保留英文双引号。
 - 每一条照片记录之间要用英文逗号分隔。
 - 相册页面会按照片原始长宽比显示，不会强行拉伸或裁切。
-- 如果想更换封面照片，把新照片命名为 portrait.jpg 并替换当前文件。
+- 如果想更换封面照片，把新照片命名为 portrait.jpg，并替换 images/cover/portrait.jpg。
 
 管理员页面：
 

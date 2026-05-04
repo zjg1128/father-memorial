@@ -12,10 +12,20 @@ Memorializing Father's Life Online.
 
 - `site-data.js`：网站文字内容
 - `album-data.js`：相册数据
-- `images/`：照片文件
+- `images/cover/`：封面和肖像照片
+- `images/album/life/`、`images/album/family/`、`images/album/group/`、`images/album/old/`：按类别保存的相册照片
 - `admin.html`：本地管理页面，可编辑文字、上传临时照片并导出数据
+- `cloudflare-worker/`：点灯和亲友寄语的 Cloudflare D1 数据库后端
 
 注意：`admin.html` 是静态管理工具，没有账号登录和服务器权限。正式公开发布时，可以选择不公开管理员页面，或仅把它作为本地维护工具使用。
+
+## 点灯和亲友寄语数据库
+
+网站前端会读取 `cloudflare-config.js` 里的 API 地址，当前配置为：
+
+`https://api.mingfu.ccwu.cc`
+
+Cloudflare D1 的建表、部署和自定义域名说明在 `cloudflare-worker/README.md`。
 
 ## GitHub Pages 发布
 

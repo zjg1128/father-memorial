@@ -5,7 +5,10 @@
   "scripts": {
     "archive:permanent": "node tools/permanent/create-archive.mjs",
     "pin:ipfs": "node tools/permanent/pin-ipfs-pinata.mjs",
-    "upload:arweave": "node tools/permanent/upload-arweave-turbo.mjs"
+    "upload:arweave": "node tools/permanent/upload-arweave-turbo.mjs",
+    "cf:dev": "npx wrangler dev --config cloudflare-worker/wrangler.toml",
+    "cf:schema": "npx wrangler d1 execute father_memorial --config cloudflare-worker/wrangler.toml --remote --file=cloudflare-worker/schema.sql",
+    "cf:deploy": "npx wrangler deploy --config cloudflare-worker/wrangler.toml"
   },
   "dependencies": {
     "@ardrive/turbo-sdk": "1.41.2",

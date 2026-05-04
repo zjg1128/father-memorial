@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const apiBase = (window.memorialApiBase || "").replace(/\/$/, "");
+
     const getStoredJson = (key, fallback) => {
         try {
             return JSON.parse(localStorage.getItem(key) || "null") || fallback;
@@ -19,6 +21,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const candleCount = document.querySelector("#candleCount");
     const tributeForm = document.querySelector("#tributeForm");
     const tributeList = document.querySelector("#tributeList");
+    const remoteComments = document.querySelector("#remoteComments");
+    const tributeStatus = document.querySelector("#tributeStatus");
     const photoGrid = document.querySelector("#photoGrid");
     const galleryFilters = document.querySelector("#galleryFilters");
     const galleryCount = document.querySelector("#galleryCount");
@@ -237,19 +241,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    const storedCandles = Number(localStorage.getItem("memorialCandles") || "0");
-    candleCount.textContent = storedCandles;
-
-    candleButton.addEventListener("click", () => {
-        const nextCount = Number(localStorage.getItem("memorialCandles") || "0") + 1;
-        localStorage.setItem("memorialCandles", String(nextCount));
-        candleCount.textContent = nextCount;
-        candleButton.textContent = "思念已点亮";
-        window.setTimeout(() => {
-            candleButton.textContent = "点一盏思念";
-        }, 1500);
-    });
-
     const createTribute = ({ name, message }) => {
         const blockquote = document.createElement("blockquote");
         blockquote.className = "tribute-item";
@@ -266,34 +257,145 @@ document.addEventListener("DOMContentLoaded", () => {
 
     applyContent();
 
-    let storedTributes = [];
+    const formatDate = (value) => {
+        if (!value) {
+            return "";
+        }
 
-    try {
-        storedTributes = JSON.parse(localStorage.getItem("memorialTributes") || "[]");
-    } catch {
-        storedTributes = [];
-    }
+        return new Intl.DateTimeFormat("zh-CN", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit"
+        }).format(new Date(value));
+    };
 
-    storedTributes.forEach((tribute) => {
-        tributeList.append(createTribute(tribute));
-    });
-
-    tributeForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-
-        const name = document.querySelector("#tributeName").value.trim();
-        const message = document.querySelector("#tributeMessage").value.trim();
-
-        if (!name || !message) {
+    const renderRemoteComments = (comments) => {
+        if (!remoteComments) {
             return;
         }
 
-        const nextTribute = { name, message };
-        const nextTributes = [nextTribute, ...storedTributes].slice(0, 20);
-        localStorage.setItem("memorialTributes", JSON.stringify(nextTributes));
+        remoteComments.replaceChildren();
 
-        tributeList.prepend(createTribute(nextTribute));
-        storedTributes = nextTributes;
-        tributeForm.reset();
-    });
+        if (!comments.length) {
+            const empty = document.createElement("p");
+            empty.className = "form-note";
+            empty.textContent = "暂时还没有亲友寄语。";
+            remoteComments.append(empty);
+            return;
+        }
+
+        comments.forEach((comment) => {
+            remoteComments.append(createTribute({
+                name: `${comment.name || "亲友"} · ${formatDate(comment.created_at)}`,
+                message: comment.message || ""
+            }));
+        });
+    };
+
+    const apiFetch = async (path, options = {}) => {
+        if (!apiBase) {
+            throw new Error("Missing API base");
+        }
+
+        const response = await fetch(`${apiBase}${path}`, {
+            ...options,
+            headers: {
+                "Content-Type": "application/json",
+                ...(options.headers || {})
+            }
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            throw new Error(data.error || "Request failed");
+        }
+
+        return data;
+    };
+
+    const loadCloudflareStore = async () => {
+        if (!apiBase) {
+            candleCount.textContent = "未配置";
+
+            if (remoteComments) {
+                remoteComments.replaceChildren();
+                const empty = document.createElement("p");
+                empty.className = "form-note";
+                empty.textContent = "数据库 API 尚未配置。";
+                remoteComments.append(empty);
+            }
+
+            return;
+        }
+
+        try {
+            const [stats, commentsData] = await Promise.all([
+                apiFetch("/stats"),
+                apiFetch("/comments")
+            ]);
+
+            candleCount.textContent = String(stats.candles || 0);
+            renderRemoteComments(Array.isArray(commentsData.comments) ? commentsData.comments : []);
+        } catch {
+            candleCount.textContent = "暂不可用";
+
+            if (remoteComments) {
+                remoteComments.replaceChildren();
+                const error = document.createElement("p");
+                error.className = "form-note";
+                error.textContent = "暂时无法读取留言，请稍后再试。";
+                remoteComments.append(error);
+            }
+        }
+    };
+
+    if (candleButton) {
+        candleButton.addEventListener("click", async () => {
+            candleButton.disabled = true;
+            candleButton.textContent = "正在点亮";
+
+            try {
+                const result = await apiFetch("/candles", { method: "POST", body: JSON.stringify({}) });
+                candleCount.textContent = String(result.candles || 0);
+                candleButton.textContent = "思念已点亮";
+            } catch {
+                candleButton.textContent = "点亮失败";
+            }
+
+            window.setTimeout(() => {
+                candleButton.disabled = false;
+                candleButton.textContent = "点一盏思念";
+            }, 1400);
+        });
+    }
+
+    if (tributeForm) {
+        tributeForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const name = document.querySelector("#tributeName").value.trim();
+            const message = document.querySelector("#tributeMessage").value.trim();
+
+            if (!name || !message) {
+                return;
+            }
+
+            tributeStatus.textContent = "正在提交……";
+
+            try {
+                await apiFetch("/comments", {
+                    method: "POST",
+                    body: JSON.stringify({ name, message })
+                });
+                tributeForm.reset();
+                tributeStatus.textContent = "寄语已保存。";
+                await loadCloudflareStore();
+            } catch (error) {
+                tributeStatus.textContent = error.message || "提交失败，请稍后再试。";
+            }
+        });
+    }
+
+    loadCloudflareStore();
 });

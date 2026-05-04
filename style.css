@@ -213,6 +213,9 @@ img {
 }
 
 .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     min-height: 46px;
     border: 1px solid transparent;
     border-radius: 6px;
@@ -236,6 +239,12 @@ img {
     background: rgba(255, 253, 248, 0.10);
     border-color: rgba(255, 253, 248, 0.48);
     color: var(--white);
+}
+
+.button.secondary {
+    border-color: var(--line);
+    background: var(--surface);
+    color: var(--teal);
 }
 
 .button.full {
@@ -574,6 +583,16 @@ img {
 }
 
 .tribute-list {
+    display: grid;
+    gap: 18px;
+}
+
+.tribute-column {
+    display: grid;
+    gap: 18px;
+}
+
+.remote-comments {
     display: grid;
     gap: 18px;
 }
