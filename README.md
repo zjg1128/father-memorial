@@ -10,7 +10,7 @@ Memorializing Father's Life Online.
 
 ## 内容管理
 
-- `site-data.js`：网站文字内容
+- `site-data.js`：网站文字内容，这是网页正式文字的唯一数据源
 - `album-data.js`：相册数据
 - `images/cover/`：封面和肖像照片
 - `images/album/life/`、`images/album/family/`、`images/album/group/`、`images/album/old/`：按类别保存的相册照片
@@ -20,6 +20,8 @@ Memorializing Father's Life Online.
 注意：`admin.html` 是静态管理工具，没有账号登录和服务器权限。正式公开发布时，可以选择不公开管理员页面，或仅把它作为本地维护工具使用。
 
 访客寄语保存在 Cloudflare D1 数据库中。管理员在 `admin.html` 的“访客寄语管理”里输入本机 `.admin-token.txt` 中的密钥后，可以读取、隐藏、恢复、修改或删除寄语。
+
+以后修改文字时，只改 `site-data.js` 或通过 `admin.html` 导出新的 `site-data.js`。`index.html` 只保留页面结构和加载占位，避免两处文字不一致。
 
 ## 点灯和亲友寄语数据库
 

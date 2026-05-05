@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (tributeList && Array.isArray(content.defaultTributes)) {
-            tributeList.querySelectorAll(".default-tribute").forEach((item) => item.remove());
+            tributeList.replaceChildren();
             content.defaultTributes.forEach((tribute) => {
                 const element = createTribute(tribute);
                 element.classList.add("default-tribute");
