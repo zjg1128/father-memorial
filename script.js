@@ -145,10 +145,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll("img[data-fallback]").forEach(attachImageFallback);
 
     const uploadedAlbum = getStoredJson("memorialUploadedAlbum", []);
+    const hiddenPhotos = getStoredJson("memorialHiddenPhotos", []);
     const album = [
         ...(Array.isArray(window.memorialAlbum) ? window.memorialAlbum : []),
         ...(Array.isArray(uploadedAlbum) ? uploadedAlbum : [])
-    ];
+    ].filter((photo) => !hiddenPhotos.includes(photo.src));
     let activeCategory = "全部";
     let searchQuery = "";
     let selectedYear = "";

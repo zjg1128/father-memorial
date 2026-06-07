@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const UPLOADED_ALBUM_KEY = "memorialUploadedAlbum";
     const ADMIN_TOKEN_KEY = "memorialAdminToken";
     const ADMIN_API_BASE_KEY = "memorialAdminApiBase";
+    const HIDDEN_PHOTOS_KEY = "memorialHiddenPhotos";
 
     const defaultContent = window.memorialContent || {};
     const defaultAlbum = Array.isArray(window.memorialAlbum) ? window.memorialAlbum : [];
@@ -185,6 +186,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const manager = document.querySelector("#albumManager");
         manager.replaceChildren();
 
+        let hiddenPhotos = getJson(HIDDEN_PHOTOS_KEY, []);
+
         const allPhotos = [
             ...defaultAlbum.map((photo) => ({ ...photo, fixed: true })),
             ...uploadedAlbum.map((photo, index) => ({ ...photo, uploadedIndex: index }))
@@ -193,6 +196,9 @@ document.addEventListener("DOMContentLoaded", () => {
         allPhotos.forEach((photo) => {
             const item = document.createElement("article");
             item.className = "admin-photo";
+            if (hiddenPhotos.includes(photo.src)) {
+                item.classList.add("hidden-photo");
+            }
 
             const image = document.createElement("img");
             image.src = photo.src;
@@ -208,6 +214,35 @@ document.addEventListener("DOMContentLoaded", () => {
             source.textContent = photo.fixed ? "固定照片" : "管理员上传";
 
             body.append(title, meta, source);
+
+            // Add visible checkbox
+            const visibleLabel = document.createElement("label");
+            visibleLabel.className = "admin-photo-visible-label";
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = !hiddenPhotos.includes(photo.src);
+
+            const labelText = document.createElement("span");
+            labelText.textContent = "在网页显示";
+
+            visibleLabel.append(checkbox, labelText);
+            body.append(visibleLabel);
+
+            checkbox.addEventListener("change", () => {
+                let currentHidden = getJson(HIDDEN_PHOTOS_KEY, []);
+                if (checkbox.checked) {
+                    currentHidden = currentHidden.filter((src) => src !== photo.src);
+                    item.classList.remove("hidden-photo");
+                } else {
+                    if (!currentHidden.includes(photo.src)) {
+                        currentHidden.push(photo.src);
+                    }
+                    item.classList.add("hidden-photo");
+                }
+                localStorage.setItem(HIDDEN_PHOTOS_KEY, JSON.stringify(currentHidden));
+                setStatus("已更新照片可见性，刷新主页即可生效。");
+            });
 
             if (!photo.fixed) {
                 body.append(createRemoveButton(() => {
@@ -304,7 +339,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const backup = {
             exportedAt: new Date().toISOString(),
             content,
-            uploadedAlbum
+            uploadedAlbum,
+            hiddenPhotos: getJson(HIDDEN_PHOTOS_KEY, [])
         };
         downloadText("memorial-admin-backup.json", JSON.stringify(backup, null, 2));
         setStatus("已导出备份 JSON。");
@@ -320,13 +356,14 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const exportAlbumJs = () => {
-        const combined = [...defaultAlbum, ...uploadedAlbum];
+        const hiddenPhotos = getJson(HIDDEN_PHOTOS_KEY, []);
+        const combined = [...defaultAlbum, ...uploadedAlbum].filter((photo) => !hiddenPhotos.includes(photo.src));
         downloadText(
             "album-data.js",
             `window.memorialAlbum = ${JSON.stringify(combined, null, 4)};\n`,
             "application/javascript"
         );
-        setStatus("已导出包含上传照片的相册 JS。");
+        setStatus("已导出包含已选照片的相册 JS (已排除隐藏照片)。");
     };
 
     const importBackup = (file) => {
@@ -342,6 +379,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 uploadedAlbum = backup.uploadedAlbum || [];
                 localStorage.setItem(CONTENT_KEY, JSON.stringify(content));
                 localStorage.setItem(UPLOADED_ALBUM_KEY, JSON.stringify(uploadedAlbum));
+                localStorage.setItem(HIDDEN_PHOTOS_KEY, JSON.stringify(backup.hiddenPhotos || []));
                 loadForm();
                 setStatus("已导入备份。");
             } catch {
@@ -582,6 +620,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelector("#resetDrafts").addEventListener("click", () => {
         localStorage.removeItem(CONTENT_KEY);
         localStorage.removeItem(UPLOADED_ALBUM_KEY);
+        localStorage.removeItem(HIDDEN_PHOTOS_KEY);
         content = getContent();
         uploadedAlbum = [];
         loadForm();

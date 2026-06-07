@@ -354,3 +354,28 @@
         padding: 10px;
     }
 }
+
+/* --- 照片可见性整理样式 --- */
+.admin-photo-visible-label {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin: 4px 0 8px;
+    font-size: 0.9rem !important;
+    color: var(--muted) !important;
+    cursor: pointer;
+    user-select: none;
+}
+
+.admin-photo-visible-label input[type="checkbox"] {
+    width: auto !important;
+    margin: 0 !important;
+    cursor: pointer;
+}
+
+.admin-photo.hidden-photo {
+    opacity: 0.46;
+    background: var(--paper-soft);
+}
+
