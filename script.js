@@ -113,6 +113,26 @@ document.addEventListener("DOMContentLoaded", () => {
         revealObserver.observe(element);
     });
 
+    // 确保直接加载 Hash 锚点或改变 Hash 时目标区域立即可见
+    const makeHashSectionVisible = () => {
+        if (window.location.hash) {
+            try {
+                const targetSection = document.querySelector(window.location.hash);
+                if (targetSection) {
+                    const fadeEl = targetSection.querySelector(".section-fade");
+                    if (fadeEl) {
+                        fadeEl.classList.add("visible");
+                    }
+                }
+            } catch (err) {
+                console.warn("Invalid hash selector:", err);
+            }
+        }
+    };
+
+    makeHashSectionVisible();
+    window.addEventListener("hashchange", makeHashSectionVisible);
+
     const attachImageFallback = (image) => {
         image.addEventListener("error", () => {
             const fallback = document.createElement("div");
