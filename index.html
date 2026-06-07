@@ -96,6 +96,12 @@
                 </header>
                 <div class="gallery-toolbar">
                     <div class="gallery-tabs" id="galleryFilters" aria-label="相册分类"></div>
+                    <div class="gallery-search-wrap">
+                        <input type="search" id="gallerySearch" placeholder="搜索照片标题或描述..." aria-label="搜索照片">
+                        <select id="galleryYearFilter" aria-label="按年份筛选">
+                            <option value="">所有年份</option>
+                        </select>
+                    </div>
                     <p class="gallery-count" id="galleryCount" aria-live="polite"></p>
                 </div>
                 <div class="photo-grid" id="photoGrid"></div>
@@ -145,12 +151,26 @@
 
     <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="照片预览" hidden>
         <button class="lightbox-close" id="lightboxClose" type="button" aria-label="关闭照片预览">×</button>
+        <button class="lightbox-nav lightbox-prev" id="lightboxPrev" type="button" aria-label="上一张" disabled>‹</button>
+        <button class="lightbox-nav lightbox-next" id="lightboxNext" type="button" aria-label="下一张" disabled>›</button>
         <img id="lightboxImage" src="" alt="">
         <div class="lightbox-caption">
             <strong id="lightboxTitle"></strong>
             <span id="lightboxMeta"></span>
             <p id="lightboxText"></p>
         </div>
+    </div>
+
+    <!-- Background Music Player -->
+    <div class="bg-music-player" id="bgMusicPlayer">
+        <audio id="bgMusicAudio" loop preload="none">
+            <source src="https://assets.mixkit.co/music/preview/mixkit-beautiful-dream-1252.mp3" type="audio/mpeg">
+            您的浏览器不支持音频播放。
+        </audio>
+        <button class="music-toggle" id="musicToggle" type="button" aria-label="播放背景音乐">
+            <span class="music-icon" aria-hidden="true">♫</span>
+            <span class="music-text">播放音乐</span>
+        </button>
     </div>
 
     <script src="site-data.js"></script>
