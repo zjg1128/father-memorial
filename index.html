@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>永远怀念 - 郑明富</title>
     <meta name="description" content="郑明富先生的数字纪念馆，记录生平、影像与家人亲友的思念。">
+    <meta name="theme-color" content="#263b38">
+    <meta property="og:title" content="永远怀念 - 郑明富">
+    <meta property="og:description" content="郑明富先生的数字纪念馆，记录生平、影像与家人亲友的思念。">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="images/cover/portrait.jpg">
+    <link rel="preload" as="image" href="images/cover/portrait.jpg">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -20,7 +26,7 @@
 
     <header class="hero" id="home">
         <div class="hero-media" aria-hidden="true">
-            <img class="hero-bg-photo" src="images/cover/portrait.jpg" alt="">
+            <img class="hero-bg-photo" src="images/cover/portrait.jpg" alt="" fetchpriority="high">
             <div class="memory-lights" id="memoryLights"></div>
             <div class="hero-candle" id="heroCandle">
                 <div class="candle-glow"></div>
@@ -60,7 +66,7 @@
                 </header>
                 <div class="life-layout">
                     <figure class="portrait-frame">
-                        <img src="images/cover/portrait.jpg" alt="郑明富先生肖像" data-fallback="照片待补">
+                        <img src="images/cover/portrait.jpg" alt="郑明富先生肖像" loading="lazy" data-fallback="照片待补">
                         <figcaption data-content="portraitCaption">朴实勤勉，温厚持家</figcaption>
                     </figure>
                     <div class="life-copy" id="lifeCopy">
